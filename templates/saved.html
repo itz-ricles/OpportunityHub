@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "partials/card.html" import card %}
+{% from "partials/forms.html" import csrf %}
+{% block title %}Saved | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Saved opportunities</h1>
+  {% if items %}
+  <div class="grid grid-3">
+    {% for o in items %}
+    <div>
+      {% if o.status == 'published' %}{{ card(o) }}{% else %}
+      <article class="card"><h3>{{ o.title }}</h3><p class="muted">No longer listed.</p></article>
+      {% endif %}
+      <form method="post" action="{{ url_for('unsave_opp', opp_id=o.id) }}">
+        {{ csrf() }}<input type="hidden" name="next" value="{{ url_for('saved') }}">
+        <button class="btn btn-outline btn-block" type="submit" aria-label="Remove {{ o.title }} from saved">Remove from saved</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card center"><p>You have not saved anything yet.</p><a class="btn" href="{{ url_for('opportunities') }}">Browse opportunities</a></div>
+  {% endif %}
+</section>
+{% endblock %}

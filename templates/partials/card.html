@@ -1,0 +1,11 @@
+{# Reusable opportunity card. Usage: {% from "partials/card.html" import card %}{{ card(o) }} #}
+{% macro card(o) %}
+<article class="card opp-card">
+  <span class="tag">{{ o.category }}</span>{% if is_closed(o.deadline) %} <span class="tag tag-closed">Closed</span>{% endif %}
+  <h3><a href="{{ url_for('opportunity_details', opp_id=o.id) }}">{{ o.title }}</a></h3>
+  <p class="muted">{{ o.organisation }}</p>
+  <p class="meta">{{ o.location }} &middot; Deadline {{ o.deadline }}</p>
+  <p>{{ o.description }}</p>
+  <a class="link" href="{{ url_for('opportunity_details', opp_id=o.id) }}">View details</a>
+</article>
+{% endmacro %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "partials/forms.html" import csrf %}
+{% block title %}Application tracker | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Application tracker</h1>
+  <p class="muted">This records your own progress. It does not submit applications for you; apply on the provider's official website.</p>
+  {% if items %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Opportunity</th><th>Organisation</th><th>Deadline</th><th>Status</th><th>Notes</th><th>Last updated</th><th><span class="sr-only">Save</span></th></tr></thead>
+      <tbody>
+        {% for o in items %}
+        <tr>
+          <td>{% if o.status == 'published' %}<a href="{{ url_for('opportunity_details', opp_id=o.id) }}">{{ o.title }}</a>{% else %}{{ o.title }} <span class="muted">(no longer listed)</span>{% endif %}</td>
+          <td>{{ o.organisation }}</td>
+          <td>{{ o.deadline }}</td>
+          <td>
+            <label class="sr-only" for="status-{{ o.id }}">Status for {{ o.title }}</label>
+            <select id="status-{{ o.id }}" name="application_status" form="f-{{ o.id }}">
+              {% for s in statuses %}<option {{ 'selected' if s == o.application_status }}>{{ s }}</option>{% endfor %}
+            </select>
+          </td>
+          <td>
+            <label class="sr-only" for="notes-{{ o.id }}">Notes for {{ o.title }}</label>
+            <input id="notes-{{ o.id }}" name="notes" form="f-{{ o.id }}" type="text" maxlength="1000" value="{{ o.notes or '' }}">
+          </td>
+          <td class="muted">{{ o.last_updated[:10] }}</td>
+          <td>
+            <form id="f-{{ o.id }}" method="post" action="{{ url_for('set_app_status', opp_id=o.id) }}">{{ csrf() }}</form>
+            <button class="btn btn-sm" type="submit" form="f-{{ o.id }}" aria-label="Update tracker entry for {{ o.title }}">Update</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="card center"><p>You are not tracking any applications yet.</p><a class="btn" href="{{ url_for('opportunities') }}">Browse opportunities</a></div>
+  {% endif %}
+</section>
+{% endblock %}

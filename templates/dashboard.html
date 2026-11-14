@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Welcome back, {{ current_user.full_name.split()[0] }}</h1>
+  <div class="grid grid-3 stats">
+    <div class="card stat"><span class="stat-num">{{ saved_count }}</span><span class="muted">Saved opportunities</span></div>
+    <div class="card stat"><span class="stat-num">{{ tracked_count }}</span><span class="muted">Tracked applications</span></div>
+    <div class="card stat"><span class="stat-num">{{ upcoming|length }}</span><span class="muted">Upcoming deadlines</span></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h2>Recent activity</h2>
+      {% if recent %}
+      <ul class="list">
+        {% for o in recent %}
+        <li><span>{% if o.status == 'published' %}<a href="{{ url_for('opportunity_details', opp_id=o.id) }}">{{ o.title }}</a>{% else %}{{ o.title }}{% endif %}</span> <span class="badge">{{ o.application_status }}</span></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">Nothing tracked yet. Open an opportunity and choose Track application.</p>
+      {% endif %}
+    </div>
+    <div class="card">
+      <h2>Upcoming deadlines</h2>
+      {% if upcoming %}
+      <ul class="list">
+        {% for o in upcoming %}
+        <li><a href="{{ url_for('opportunity_details', opp_id=o.id) }}">{{ o.title }}</a> <span class="muted">{{ o.deadline }}</span></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">Save or track an opportunity and its deadline will show here.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <p class="actions">
+    <a class="btn" href="{{ url_for('opportunities') }}">Find opportunities</a>
+    <a class="btn btn-outline" href="{{ url_for('saved') }}">View saved</a>
+    <a class="btn btn-outline" href="{{ url_for('applications') }}">Open tracker</a>
+  </p>
+</section>
+{% endblock %}

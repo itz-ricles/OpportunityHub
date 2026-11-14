@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "partials/forms.html" import csrf %}
+{% block title %}{{ o.title }} | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container narrow section">
+  <a class="link" href="{{ url_for('opportunities') }}">Back to opportunities</a>
+  <p><span class="tag">{{ o.category }}</span>{% if is_closed(o.deadline) %} <span class="tag tag-closed">Closed</span>{% endif %}</p>
+  <h1>{{ o.title }}</h1>
+  <p class="muted">{{ o.organisation }} &middot; {{ o.location }}</p>
+  <p><strong>Application deadline:</strong> {{ o.deadline }}</p>
+
+  {% if is_closed(o.deadline) %}<p class="notice">This deadline has passed. Check the official site in case it was extended or reopened.</p>{% endif %}
+  <h2>Description</h2><p>{{ o.description }}</p>
+  <h2>Eligibility</h2><p>{{ o.eligibility }}</p>
+  {% if o.funding_information %}<h2>Funding</h2><p>{{ o.funding_information }}</p>{% endif %}
+
+  <div class="actions">
+    <a class="btn" href="{{ o.application_url }}" target="_blank" rel="noopener noreferrer">Go to official site</a>
+    {% if current_user %}
+      {% if is_saved %}
+      <form method="post" action="{{ url_for('unsave_opp', opp_id=o.id) }}">{{ csrf() }}<button class="btn btn-outline" type="submit">Remove from saved</button></form>
+      {% else %}
+      <form method="post" action="{{ url_for('save_opp', opp_id=o.id) }}">{{ csrf() }}<button class="btn btn-outline" type="submit">Save opportunity</button></form>
+      {% endif %}
+      {% if tracked %}
+      <a class="btn btn-outline" href="{{ url_for('applications') }}">Tracking: {{ tracked.application_status }}</a>
+      {% else %}
+      <form method="post" action="{{ url_for('track_app', opp_id=o.id) }}">{{ csrf() }}<button class="btn btn-outline" type="submit">Track application</button></form>
+      {% endif %}
+    {% else %}
+      <a class="btn btn-outline" href="{{ url_for('login', next=request.path) }}">Log in to save or track</a>
+    {% endif %}
+  </div>
+  <p class="notice">OpportunityHub only lists opportunities. We do not award scholarships, submit applications for you, or guarantee acceptance. Always confirm details on the provider's official website.</p>
+</section>
+{% endblock %}

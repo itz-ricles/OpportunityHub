@@ -1,0 +1,16 @@
+# systemd unit for running OpportunityHub on a plain EC2 server (see documentation/aws_deployment_guide.md, Path B)
+[Unit]
+Description=OpportunityHub (gunicorn)
+After=network.target
+
+[Service]
+User=opportunityhub
+WorkingDirectory=/opt/opportunityhub
+EnvironmentFile=/etc/opportunityhub.env
+ExecStart=/opt/opportunityhub/venv/bin/gunicorn wsgi:app --bind 127.0.0.1:8000 --workers 2 --threads 4 --timeout 30 --access-logfile - --error-logfile -
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

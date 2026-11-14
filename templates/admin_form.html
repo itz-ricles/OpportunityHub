@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "partials/forms.html" import csrf, error_list %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} opportunity | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container narrow section">
+  <a class="link" href="{{ url_for('admin_dashboard') }}">Back to admin</a>
+  <h1>{{ 'Edit opportunity' if editing else 'Add opportunity' }}</h1>
+  <form class="form card" method="post">
+    {{ csrf() }}
+    {{ error_list(errors) }}
+    <label for="title">Title</label>
+    <input id="title" name="title" type="text" maxlength="200" value="{{ v.get('title', '') }}" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="">Choose a category</option>
+      {% for name in category_names %}<option value="{{ name }}" {{ 'selected' if v.get('category') == name }}>{{ name }}</option>{% endfor %}
+    </select>
+
+    <label for="organisation">Organisation</label>
+    <input id="organisation" name="organisation" type="text" maxlength="200" value="{{ v.get('organisation', '') }}" required>
+
+    <label for="location">Location</label>
+    <input id="location" name="location" type="text" maxlength="200" value="{{ v.get('location', '') }}" required>
+
+    <label for="geographical_scope">Geographical scope</label>
+    <select id="geographical_scope" name="geographical_scope" required>
+      <option value="">Choose a scope</option>
+      {% for s in scopes %}<option value="{{ s }}" {{ 'selected' if v.get('geographical_scope') == s }}>{{ s }}</option>{% endfor %}
+    </select>
+
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="5" required>{{ v.get('description', '') }}</textarea>
+
+    <label for="eligibility">Eligibility requirements</label>
+    <textarea id="eligibility" name="eligibility" rows="4" required>{{ v.get('eligibility', '') }}</textarea>
+
+    <label for="funding_information">Funding information (optional)</label>
+    <textarea id="funding_information" name="funding_information" rows="3">{{ v.get('funding_information') or '' }}</textarea>
+
+    <label for="application_url">Official application URL</label>
+    <input id="application_url" name="application_url" type="url" value="{{ v.get('application_url', '') }}" required>
+
+    <label for="deadline">Application deadline</label>
+    <input id="deadline" name="deadline" type="date" value="{{ v.get('deadline', '') }}" required>
+
+    <div class="actions">
+      {% if editing %}
+        <button class="btn" type="submit" name="action" value="save">Save changes</button>
+        {% if opp_status != 'published' %}<button class="btn btn-outline" type="submit" name="action" value="publish">Save and publish</button>{% endif %}
+      {% else %}
+        <button class="btn" type="submit" name="action" value="publish">Publish</button>
+        <button class="btn btn-outline" type="submit" name="action" value="draft">Save as draft</button>
+      {% endif %}
+    </div>
+  </form>
+</section>
+{% endblock %}

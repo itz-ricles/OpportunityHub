@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "partials/card.html" import card %}
+{% block title %}Opportunities | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Opportunities</h1>
+  <form class="filters card" method="get" role="search">
+    <div>
+      <label for="q">Search</label>
+      <input id="q" name="q" type="search" value="{{ q }}" placeholder="Title, organisation or location">
+    </div>
+    <div>
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="">All categories</option>
+        {% for name, _ in categories %}<option value="{{ name }}" {{ 'selected' if name == category }}>{{ name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="scope">Scope</label>
+      <select id="scope" name="scope">
+        <option value="">Local and international</option>
+        <option value="Local" {{ 'selected' if scope == 'Local' }}>Local (Ghana)</option>
+        <option value="International" {{ 'selected' if scope == 'International' }}>International</option>
+      </select>
+    </div>
+    <button class="btn" type="submit">Apply filters</button>
+  </form>
+
+  <p class="muted">{{ results|length }} result{{ '' if results|length == 1 else 's' }}, sorted by nearest deadline.</p>
+  {% if results %}
+  <div class="grid grid-3">{% for o in results %}{{ card(o) }}{% endfor %}</div>
+  {% else %}
+  <div class="card center"><p>No opportunities match those filters.</p><a href="{{ url_for('opportunities') }}">Clear filters</a></div>
+  {% endif %}
+</section>
+{% endblock %}

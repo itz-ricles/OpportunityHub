@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "partials/card.html" import card %}
+{% block title %}OpportunityHub | Find Opportunities. Move Forward.{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container narrow center">
+    <h1>Find Opportunities. Move Forward.</h1>
+    <p class="lead">Scholarships, internships, courses and competitions for university students in Ghana, and the world beyond it.</p>
+    <form class="search-bar" action="{{ url_for('opportunities') }}" method="get" role="search">
+      <label class="sr-only" for="hero-q">Search opportunities</label>
+      <input id="hero-q" name="q" type="search" placeholder="Search by title, organisation or location">
+      <button class="btn" type="submit">Search</button>
+    </form>
+    <a class="link" href="{{ url_for('opportunities') }}">Browse all opportunities</a>
+  </div>
+</section>
+
+<section class="container section">
+  <h2>Browse by category</h2>
+  <div class="grid grid-4">
+    {% for name, blurb in categories %}
+    <a class="card cat-card" href="{{ url_for('opportunities', category=name) }}">
+      <h3>{{ name }}</h3>
+      <p class="muted">{{ blurb }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="band">
+  <div class="container section">
+    <h2>Featured opportunities</h2>
+    <div class="grid grid-3">{% for o in featured %}{{ card(o) }}{% endfor %}</div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><strong>Create a free account.</strong> It takes a minute.</li>
+    <li><strong>Search and filter.</strong> Narrow by category, location and deadline.</li>
+    <li><strong>Save and track.</strong> Bookmark listings and record your progress, then apply on the provider's official website.</li>
+  </ol>
+</section>
+{% endblock %}

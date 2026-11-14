@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Students | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Registered students</h1>
+  {% if students %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Saved</th><th>Tracked</th></tr></thead>
+      <tbody>
+        {% for s in students %}
+        <tr><td>{{ s.full_name }}</td><td>{{ s.email }}</td><td>{{ s.created_at[:10] }}</td><td>{{ s.saved_count }}</td><td>{{ s.tracked_count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="card center"><p>No students have registered yet.</p></div>{% endif %}
+</section>
+{% endblock %}

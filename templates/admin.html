@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "partials/forms.html" import csrf %}
+{% block title %}Admin | OpportunityHub{% endblock %}
+{% block content %}
+<section class="container section">
+  <h1>Admin dashboard</h1>
+  <div class="grid grid-4 stats">
+    <div class="card stat"><span class="stat-num">{{ stats.students }}</span><span class="muted">Registered students</span></div>
+    <div class="card stat"><span class="stat-num">{{ stats.published }}</span><span class="muted">Active opportunities</span></div>
+    <div class="card stat"><span class="stat-num">{{ stats.applications }}</span><span class="muted">Tracked applications</span></div>
+    <div class="card stat"><span class="stat-num">{{ stats.saved }}</span><span class="muted">Saved bookmarks</span></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card"><h2>Active by category</h2>
+      <ul class="list">{% for name, n in stats.by_category %}<li><span>{{ name }}</span><strong>{{ n }}</strong></li>{% endfor %}</ul></div>
+    <div class="card"><h2>Tracker activity</h2>
+      <ul class="list">{% for name, n in stats.by_status %}<li><span>{{ name }}</span><strong>{{ n }}</strong></li>{% endfor %}</ul></div>
+  </div>
+
+  <div class="row-between"><h2>Manage opportunities</h2><a class="btn" href="{{ url_for('admin_new') }}">Add opportunity</a></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Title</th><th>Category</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for o in items %}
+        <tr>
+          <td>{{ o.title }}</td><td>{{ o.category }}</td><td>{{ o.deadline }}</td>
+          <td><span class="badge">{{ o.status }}</span>{% if is_closed(o.deadline) %} <span class="badge tag-closed">expired</span>{% endif %}</td>
+          <td class="row-actions">
+            <a class="btn btn-sm btn-outline" href="{{ url_for('admin_edit', opp_id=o.id) }}" aria-label="Edit {{ o.title }}">Edit</a>
+            {% if o.status == 'published' %}
+            <form method="post" action="{{ url_for('admin_deactivate', opp_id=o.id) }}">{{ csrf() }}<button class="btn btn-sm btn-outline" type="submit" aria-label="Deactivate {{ o.title }}">Deactivate</button></form>
+            {% else %}
+            <form method="post" action="{{ url_for('admin_publish', opp_id=o.id) }}">{{ csrf() }}<button class="btn btn-sm btn-outline" type="submit" aria-label="Publish {{ o.title }}">Publish</button></form>
+            {% endif %}
+            <form method="post" action="{{ url_for('admin_delete', opp_id=o.id) }}" data-confirm="Delete this opportunity permanently? Students' saved and tracked entries for it will also be removed.">{{ csrf() }}<button class="btn btn-sm btn-danger" type="submit" aria-label="Delete {{ o.title }}">Delete</button></form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
